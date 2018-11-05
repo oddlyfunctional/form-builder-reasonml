@@ -58,9 +58,16 @@ let make = (_children) => {
                (switch question {
                  | TextField(description) =>
                    <TextField description value onChange />
-                 | TextArea(description) => <TextArea description value onChange />
+                 | TextArea(description) =>
+                   <TextArea description value onChange />
                  | AlternateChoices(description, questions) =>
-                    <AlternateChoices description questions id=index />
+                    <AlternateChoices
+                      description
+                      questions
+                      id=index
+                      value
+                      onChange
+                    />
                  | MultipleChoices(description, questions) =>
                     <MultipleChoices description questions id=index />
                })
