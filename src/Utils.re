@@ -7,5 +7,5 @@ let buildAnswer = (event: ReactEvent.synthetic(ReactEvent.Form.tag)) =>
   Answer(ReactEvent.Form.target(event)##value);
 let extractAnswer = fun
   | Answer(value) => value
-  | Answers([value, ..._]) => value
-  | Answers([]) => "";
+  | Answers(set) when StringSet.is_empty(set) => ""
+  | Answers(set) => StringSet.choose(set);

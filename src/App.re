@@ -25,7 +25,8 @@ type state = {
   answers: array(answer),
 };
 
-type action = Update(int, answer);
+type id = int;
+type action = UpdateAnswer(id, answer);
 
 let component = ReasonReact.reducerComponent("App");
 
@@ -37,7 +38,7 @@ let make = (_children) => {
   },
   reducer: (action, state) =>
     switch action {
-      | Update(index, answer) =>
+      | UpdateAnswer(index, answer) =>
         ReasonReact.Update({
           ...state,
           answers: state.answers
@@ -52,7 +53,7 @@ let make = (_children) => {
         questionnaire.questions
         |> mapi((index, question) => {
              let value = state.answers[index];
-             let onChange = answer => send(Update(index, answer));
+             let onChange = answer => send(UpdateAnswer(index, answer));
 
              <div key=string_of_int(index)>
                (switch question {
@@ -69,7 +70,13 @@ let make = (_children) => {
                       onChange
                     />
                  | MultipleChoices(description, questions) =>
-                    <MultipleChoices description questions id=index />
+                    <MultipleChoices
+                      description
+                      questions
+                      id=index
+                      value
+                      onChange
+                    />
                })
              </div>
         })
