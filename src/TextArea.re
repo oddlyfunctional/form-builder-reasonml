@@ -1,11 +1,15 @@
 open Utils;
+open SharedTypes;
 
 let component = ReasonReact.statelessComponent("TextArea");
-let make = (~description, _children) => {
+let make = (~description, ~value, ~onChange, _children) => {
   ...component,
   render: _self =>
     <>
       <h2>(s(description))</h2>
-      <textarea></textarea>
+      <textarea
+        value=(extractAnswer(value))
+        onChange=(event => event |> buildAnswer |> onChange)
+      ></textarea>
     </>,
 };

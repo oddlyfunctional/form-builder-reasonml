@@ -1,15 +1,5 @@
 open Utils;
-
-type description = string;
-type choice = string;
-
-type question =
-  | TextField(description)
-  | TextArea(description)
-  | AlternateChoices(description, list(choice))
-  | MultipleChoices(description, list(choice));
-
-type questionnaire = { description, questions: list(question) };
+open SharedTypes;
 
 let questionnaire: questionnaire = {
   description: "ReasonML Survey",
@@ -30,28 +20,52 @@ let questionnaire: questionnaire = {
   ],
 };
 
-let component = ReasonReact.statelessComponent("App");
+type state = {
+  questionnaire,
+  answers: array(answer),
+};
+
+type action = Update(int, answer);
+
+let component = ReasonReact.reducerComponent("App");
 
 let make = (_children) => {
   ...component,
-  render: _self =>
+  initialState: () => {
+    questionnaire,
+    answers: Array.make(List.length(questionnaire.questions), Answer("")),
+  },
+  reducer: (action, state) =>
+    switch action {
+      | Update(index, answer) =>
+        ReasonReact.Update({
+          ...state,
+          answers: state.answers
+            |> Array.mapi((i, a) => if (index == i) answer else a)
+        })
+    },
+  render: ({ send, state }) =>
     <>
       <h1>(s(questionnaire.description))</h1>
 
       (
         questionnaire.questions
-        |> mapi((index, question) =>
+        |> mapi((index, question) => {
+             let value = state.answers[index];
+             let onChange = answer => send(Update(index, answer));
+
              <div key=string_of_int(index)>
                (switch question {
-                 | TextField(description) => <TextField description />
-                 | TextArea(description) => <TextArea description />
+                 | TextField(description) =>
+                   <TextField description value onChange />
+                 | TextArea(description) => <TextArea description value onChange />
                  | AlternateChoices(description, questions) =>
                     <AlternateChoices description questions id=index />
                  | MultipleChoices(description, questions) =>
                     <MultipleChoices description questions id=index />
                })
              </div>
-           )
+        })
       )
     </>,
 };
