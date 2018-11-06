@@ -18,23 +18,41 @@ let instance = Firebase.(init({
 let questionnaireDB = QuestionnaireDB.make(instance);
 let answerDB = AnswerDB.make(instance);
 
-type state = option(questionnaire);
-type action = SetQuestionnaire(questionnaire);
+type state = Loading | Loaded(questionnaire) | Submitting | Done | Error(Firebase.error);
+type action = Loaded(questionnaire) | Submitting | Done | Error(Firebase.error);
 
 let component = ReasonReact.reducerComponent("App");
 
 let make = (_children) => {
   ...component,
-  initialState: () => None,
+  initialState: () => Loading,
   didMount: ({ send }) =>
-    questionnaireDB.get("1", q => q -> SetQuestionnaire -> send) |> ignore,
+    questionnaireDB.get("1", q => q -> Loaded -> send) |> ignore,
   reducer: (action, _state) =>
-    switch action {
-      | SetQuestionnaire(q) => ReasonReact.Update(Some(q))
-    },
-  render: ({ state }) =>
+    ReasonReact.Update(
+      switch action {
+        | Loaded(q) => Loaded(q)
+        | Done => Done
+        | Submitting => Submitting
+        | Error(error) => Error(error)
+      }
+    ),
+  render: ({ state, send }) =>
     switch state {
-      | None => <h1>(s("Loading..."))</h1>
-      | Some(questionnaire) => <Form questionnaire onSubmit=answerDB.create />
+      | Loading => <h1>(s("Loading..."))</h1>
+      | Done => <h1>(s("Thank you for filling our survey!"))</h1>
+      | Submitting => <h1>(s("Submitting..."))</h1>
+      | Error(error) => <h1>(s("Something went wrong: " ++ error))</h1>
+      | Loaded(questionnaire) => {
+        let submitting = x => { send(Submitting); x };
+        let onComplete = fun
+          | Some(error) => send(Error(error))
+          | None => send(Done);
+
+        <Form
+          questionnaire
+          onSubmit=(submitting |- answerDB.create(~onComplete))
+        />
+      }
     }
 };

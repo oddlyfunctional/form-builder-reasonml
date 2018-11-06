@@ -9,6 +9,7 @@ type credential = string;
 type domain = string;
 type url = string;
 type path = string;
+type error = string;
 
 type config = {
   apiKey: credential,
@@ -24,14 +25,18 @@ module type Config {
   let decode: (Js.Json.t) => record;
 }
 
-type getCallback = (dataSnapshot(Js.Json.t)) => unit;
+type onComplete = option(error) => unit;
+
 [@bs.module "firebase"] external initializeApp : 'a => firebase = "";
 [@bs.send] external database: firebase => db = "";
 [@bs.send] external ref_: (db, path) => reference = "ref";
-[@bs.send] external set: (reference, Js.Json.t) => unit = "";
+[@bs.send] external set': (reference, Js.Json.t, Js.Nullable.t(error) => unit) => unit = "set";
 [@bs.send] external push: (reference) => reference = "";
-[@bs.send] external once: (reference, string, getCallback) => reference = "";
+[@bs.send] external once: (reference, string, (dataSnapshot(Js.Json.t)) => unit) => reference = "";
 [@bs.send] external val_: dataSnapshot(Js.Json.t) => Js.Json.t = "val";
+
+let set = (reference, json, onComplete) =>
+  set'(reference, json, Js.Nullable.toOption |- onComplete);
 
 let encodeConfig = config =>
   Json.Encode.(
@@ -46,17 +51,17 @@ let init = encodeConfig |- initializeApp;
 
 module Make = (Config: Config) => {
   type interface = {
-    create: Config.record => unit,
+    create: (~onComplete: onComplete=?, Config.record) => unit,
     get: (string, Config.record => unit) => reference,
   };
 
   let make = instance => {
-    let create = (record) =>
+    let create = (~onComplete = _ => (), record) =>
       instance
         -> database
         -> ref_(Config.path)
         -> push
-        -> set(Config.encode(record));
+        -> set(Config.encode(record), onComplete);
 
     let get = (id, cb) =>
       instance
