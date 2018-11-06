@@ -10,7 +10,7 @@ type id = int;
 type action = UpdateAnswer(id, Answer.t);
 
 let component = ReasonReact.reducerComponent("Form");
-let make = (~questionnaire, _children) => {
+let make = (~questionnaire, ~onSubmit, _children) => {
   ...component,
   initialState: () => {
     questionnaire,
@@ -26,7 +26,10 @@ let make = (~questionnaire, _children) => {
         })
     },
   render: ({ send, state }) =>
-    <>
+    <form onSubmit=(event => {
+      ReactEvent.Synthetic.preventDefault(event);
+      onSubmit(state.answers);
+    })>
       <h1>(s(questionnaire.description))</h1>
 
       (
@@ -61,5 +64,7 @@ let make = (~questionnaire, _children) => {
              </div>
         })
       )
-    </>,
+
+      <button type_="submit">(s("Submit"))</button>
+    </form>,
 };
