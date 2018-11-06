@@ -4,20 +4,13 @@ open SharedTypes;
 let component = ReasonReact.statelessComponent("MultipleChoices");
 let make = (~description, ~questions, ~id, ~value, ~onChange, _children) => {
   ...component,
-  render: _self => {
-    let answers =
-      switch value {
-        | Answer("") => StringSet.empty
-        | Answer(a) => StringSet.singleton(a)
-        | Answers(a) => a
-      };
-
+  render: _self =>
     <>
       <h2>(s(description))</h2>
       
       (questions
        |> mapi((index, question) => {
-         let checked = StringSet.exists(a => a == question, answers);
+         let checked = Answer.contains(value, question);
 
          <label key=string_of_int(index)>
           <input
@@ -26,19 +19,18 @@ let make = (~description, ~questions, ~id, ~value, ~onChange, _children) => {
             name=("question" ++ string_of_int(id))
             checked
             onChange=(_event => {
-              onChange(Answers(
+              onChange(
                 if (checked) {
-                  StringSet.remove(question, answers)
+                  Answer.remove(question, value)
                 } else {
-                  StringSet.add(question, answers)
+                  Answer.add(question, value)
                 }
-              ));
+              );
             })
           />
           (s(question))
          </label>
        })
       )
-    </>
-  },
+    </>,
 };

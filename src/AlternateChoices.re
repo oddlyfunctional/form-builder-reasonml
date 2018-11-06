@@ -14,8 +14,8 @@ let make = (~description, ~questions, ~id, ~value, ~onChange, _children) => {
             type_="radio"
             name=("question" ++ string_of_int(id))
             value=question
-            checked=(extractAnswer(value) == question)
-            onChange=(event => event |> buildAnswer |> onChange)
+            checked=(Answer.contains(value, question))
+            onChange=(event => event |> Answer.fromInput |> onChange)
           />
           (s(question))
          </label>

@@ -22,11 +22,11 @@ let questionnaire: questionnaire = {
 
 type state = {
   questionnaire,
-  answers: array(answer),
+  answers: array(Answer.t),
 };
 
 type id = int;
-type action = UpdateAnswer(id, answer);
+type action = UpdateAnswer(id, Answer.t);
 
 let component = ReasonReact.reducerComponent("App");
 
@@ -34,7 +34,7 @@ let make = (_children) => {
   ...component,
   initialState: () => {
     questionnaire,
-    answers: Array.make(List.length(questionnaire.questions), Answer("")),
+    answers: Array.make(List.length(questionnaire.questions), Answer.empty),
   },
   reducer: (action, state) =>
     switch action {

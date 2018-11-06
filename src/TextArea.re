@@ -8,8 +8,8 @@ let make = (~description, ~value, ~onChange, _children) => {
     <>
       <h2>(s(description))</h2>
       <textarea
-        value=(extractAnswer(value))
-        onChange=(event => event |> buildAnswer |> onChange)
+        value=(Answer.get(value))
+        onChange=(event => event |> Answer.fromInput |> onChange)
       ></textarea>
     </>,
 };
