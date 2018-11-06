@@ -1,4 +1,3 @@
-open SharedTypes;
 open Utils;
 
 type firebase;
@@ -20,13 +19,19 @@ type config = {
 
 module type Config {
   type record;
-  let instance: firebase;
   let path: path;
   let encode: (record) => Js.Json.t;
   let decode: (Js.Json.t) => record;
 }
 
+type getCallback = (dataSnapshot(Js.Json.t)) => unit;
 [@bs.module "firebase"] external initializeApp : 'a => firebase = "";
+[@bs.send] external database: firebase => db = "";
+[@bs.send] external ref_: (db, path) => reference = "ref";
+[@bs.send] external set: (reference, Js.Json.t) => unit = "";
+[@bs.send] external push: (reference) => reference = "";
+[@bs.send] external once: (reference, string, getCallback) => reference = "";
+[@bs.send] external val_: dataSnapshot(Js.Json.t) => Js.Json.t = "val";
 
 let encodeConfig = config =>
   Json.Encode.(
@@ -40,23 +45,25 @@ let encodeConfig = config =>
 let init = encodeConfig |- initializeApp;
 
 module Make = (Config: Config) => {
-  [@bs.send] external database: firebase => db = "";
-  [@bs.send] external ref_: (db, path) => reference = "ref";
-  [@bs.send] external set: (reference, Js.Json.t) => unit = "";
-  [@bs.send] external push: (reference) => reference = "";
-  [@bs.send] external once: (reference, string, (dataSnapshot(Js.Json.t)) => 'a) => reference = "";
-  [@bs.send] external val_: dataSnapshot(Js.Json.t) => Js.Json.t = "val";
+  type interface = {
+    create: Config.record => unit,
+    get: (string, Config.record => unit) => reference,
+  };
 
-  let create = (record) =>
-    Config.instance
-      -> database
-      -> ref_(Config.path)
-      -> push
-      -> set(Config.encode(record));
+  let make = instance => {
+    let create = (record) =>
+      instance
+        -> database
+        -> ref_(Config.path)
+        -> push
+        -> set(Config.encode(record));
 
-  let get = (id, cb) =>
-    Config.instance
-      -> database
-      -> ref_(Config.path ++ "/" ++ id)
-      -> once("value", val_ |- Config.decode |- cb);
+    let get = (id, cb) =>
+      instance
+        -> database
+        -> ref_(Config.path ++ "/" ++ id)
+        -> once("value", val_ |- Config.decode |- cb);
+
+    { create, get };
+  };
 };
