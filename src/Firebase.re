@@ -42,10 +42,10 @@ let init = encodeConfig |- initializeApp;
 module Make = (Config: Config) => {
   [@bs.send] external database: firebase => db = "";
   [@bs.send] external ref_: (db, path) => reference = "ref";
-  [@bs.send] external set: (reference, 'a) => unit = "";
+  [@bs.send] external set: (reference, Js.Json.t) => unit = "";
   [@bs.send] external push: (reference) => reference = "";
-  [@bs.send] external once: (reference, string, (dataSnapshot('a)) => unit) => reference = "";
-  [@bs.send] external val_: dataSnapshot('a) => 'a = "val";
+  [@bs.send] external once: (reference, string, (dataSnapshot(Js.Json.t)) => 'a) => reference = "";
+  [@bs.send] external val_: dataSnapshot(Js.Json.t) => Js.Json.t = "val";
 
   let create = (record) =>
     Config.instance
