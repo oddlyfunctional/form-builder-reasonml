@@ -16,6 +16,7 @@ let instance = Firebase.(init({
 }));
 
 let questionnaireDB = QuestionnaireDB.make(instance);
+let answerDB = AnswerDB.make(instance);
 
 type state = option(questionnaire);
 type action = SetQuestionnaire(questionnaire);
@@ -34,6 +35,6 @@ let make = (_children) => {
   render: ({ state }) =>
     switch state {
       | None => <h1>(s("Loading..."))</h1>
-      | Some(questionnaire) => <Form questionnaire onSubmit=Js.log />
+      | Some(questionnaire) => <Form questionnaire onSubmit=answerDB.create />
     }
 };
