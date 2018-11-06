@@ -6,16 +6,35 @@ open SharedTypes;
 [@bs.val] external databaseURL: string = "process.env.FIREBASE_DATABASE_URL";
 [@bs.val] external storageBucket: string = "process.env.FIREBASE_STORAGE_BUCKET";
 
-let config = Firebase.{
+let instance = Firebase.(init({
   apiKey,
   authDomain,
   databaseURL,
   storageBucket,
-};
+}));
 
-let fb = Firebase.(config |> encodeConfig |> initializeApp);
+module PersonDB = Firebase.Make({
+  type record = person;
+  let instance = instance;
 
-Firebase.readPerson(fb, "-LQbz9VPCFY0Dlih9oAM", Js.log);
+  let path = "/users";
+
+  let encode = person =>
+    Json.Encode.(
+      object_([
+        ("name", person.name |> string),
+        ("age", person.age |> int),
+      ])
+    );
+
+  let decode = json =>
+    Json.Decode.{
+      name: json |> field("name", string),
+      age: json |> field("age", int),
+    };
+});
+
+PersonDB.get("-LQbz9VPCFY0Dlih9oAM", p => Js.log(p.name));
 
 let json = [%bs.raw {|
 {
