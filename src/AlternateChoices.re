@@ -15,7 +15,7 @@ let make = (~description, ~questions, ~id, ~value, ~onChange, _children) => {
             name=("question" ++ string_of_int(id))
             value=question
             checked=(Answer.contains(value, question))
-            onChange=(event => event |> Answer.fromInput |> onChange)
+            onChange=(Answer.fromInput |- onChange)
           />
           (s(question))
          </label>

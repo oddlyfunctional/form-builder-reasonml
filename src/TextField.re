@@ -10,7 +10,7 @@ let make = (~description, ~value, ~onChange, _children) => {
       <input
         type_="text"
         value=(Answer.get(value))
-        onChange=(event => event |> Answer.fromInput |> onChange)
+        onChange=(Answer.fromInput |- onChange)
       />
     </>,
 };

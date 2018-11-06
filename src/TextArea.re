@@ -9,7 +9,7 @@ let make = (~description, ~value, ~onChange, _children) => {
       <h2>(s(description))</h2>
       <textarea
         value=(Answer.get(value))
-        onChange=(event => event |> Answer.fromInput |> onChange)
+        onChange=(Answer.fromInput |- onChange)
       ></textarea>
     </>,
 };
