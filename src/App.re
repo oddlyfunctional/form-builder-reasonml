@@ -1,4 +1,21 @@
 open SharedTypes;
+[%raw {| require("dotenv").config() |}]
+
+[@bs.val] external apiKey: string = "process.env.FIREBASE_API_KEY";
+[@bs.val] external authDomain: string = "process.env.FIREBASE_AUTH_DOMAIN";
+[@bs.val] external databaseURL: string = "process.env.FIREBASE_DATABASE_URL";
+[@bs.val] external storageBucket: string = "process.env.FIREBASE_STORAGE_BUCKET";
+
+let config = Firebase.{
+  apiKey,
+  authDomain,
+  databaseURL,
+  storageBucket,
+};
+
+let fb = Firebase.(config |> encodeConfig |> initializeApp);
+
+Firebase.readPerson(fb, "-LQbz9VPCFY0Dlih9oAM", Js.log);
 
 let json = [%bs.raw {|
 {

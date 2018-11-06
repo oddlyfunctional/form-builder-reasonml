@@ -8,3 +8,5 @@ type question =
   | MultipleChoices(description, list(choice));
 
 type questionnaire = { description, questions: list(question) };
+
+type person = { name: string, age: int };
