@@ -1,3 +1,5 @@
+type t = array(Answer.t);
+
 let decodeAnswer = json =>
   Json.Decode.({
     json |> array(list(string)) |> Array.map(Answer.ofList)
@@ -9,7 +11,7 @@ let encodeAnswer = answer =>
   );
 
 include Firebase.Make({
-  type record = array(Answer.t);
+  type record = t;
   let path = "/questionnaires/1/answers";
 
   let encode = encodeAnswer;
