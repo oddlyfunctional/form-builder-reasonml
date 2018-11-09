@@ -1,3 +1,6 @@
+/* TODO: The current representation for an Answer allows for multiple answers
+ * in cases when it should allow only one. Find a better solution. */
+
 type answer = string;
 
 module AnswerSet = Set.Make({

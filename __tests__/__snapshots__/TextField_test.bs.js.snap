@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Answer calls onChange 1`] = `[Function]`;
+
+exports[`Answer renders the description 1`] = `
+<h2>
+  test description
+</h2>
+`;
+
+exports[`Answer sets the value for the input 1`] = `
+<input
+  type="text"
+  value="test answer"
+/>
+`;
