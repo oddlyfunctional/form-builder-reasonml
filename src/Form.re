@@ -25,7 +25,7 @@ let make = (~questionnaire, ~onSubmit, _children) => {
             |> Array.mapi((i, a) => if (index == i) answer else a)
         })
     },
-  render: ({ send, state }) =>
+  render: ({ state, handle }) =>
     <form onSubmit=(event => {
       ReactEvent.Synthetic.preventDefault(event);
       onSubmit(state.answers);
@@ -36,7 +36,7 @@ let make = (~questionnaire, ~onSubmit, _children) => {
         questionnaire.questions
         |> mapi((index, question) => {
              let value = state.answers[index];
-             let onChange = answer => send(UpdateAnswer(index, answer));
+             let onChange = handle((answer, { send }) => send(UpdateAnswer(index, answer)));
 
              <div key=string_of_int(index)>
                (switch question {

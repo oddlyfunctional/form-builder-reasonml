@@ -42,7 +42,7 @@ let make = (~id, _children) => {
         });
       | Error(error) => ReasonReact.Update(Error(error))
     },
-  render: ({ state, send }) =>
+  render: ({ state, handle }) =>
     switch state {
       | Loading => <h1>(s("Loading..."))</h1>
       | Done => <h1>(s("Thank you for filling our survey!"))</h1>
@@ -51,7 +51,7 @@ let make = (~id, _children) => {
       | Loaded(questionnaire) =>
           <Form
             questionnaire
-            onSubmit=(answers => send(Submit(answers)))
+            onSubmit=handle((answers, { send }) => send(Submit(answers)))
           />
     }
 };
