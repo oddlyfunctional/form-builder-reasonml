@@ -25,7 +25,7 @@ let make = (_children) => {
   render: ({ state }) =>
     <>
       (switch state {
-        | NewQuestionnaire => <h1>(s("new questionnaire"))</h1>
+        | NewQuestionnaire => <NewQuestionnaire />
         | ShowQuestionnaire(id) => <ShowQuestionnaire id />
         | NotFound => <h1>(s("not found"))</h1>
       })
