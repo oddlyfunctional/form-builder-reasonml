@@ -1,19 +1,21 @@
 open Utils;
 
-type route = NewQuestionnaire | ShowQuestionnaire(string) | NotFound;
+type id = string;
+type route = ListQuestionnaires | EditQuestionnaire(id) | ShowQuestionnaire(id) | NotFound;
 type state = route;
 type action = route;
 
 let component = ReasonReact.reducerComponent("Router");
 let make = (_children) => {
   ...component,
-  initialState: () => NewQuestionnaire,
+  initialState: () => ListQuestionnaires,
   didMount: ({ send, onUnmount }) => {
     let routeChanged = (url: ReasonReact.Router.url) =>
       switch (url.path) {
-        | ["questionnaires", "new"] => send(NewQuestionnaire)
+        | ["questionnaires"] => send(ListQuestionnaires)
+        | ["questionnaires", id, "edit"] => send(EditQuestionnaire(id))
         | ["questionnaires", id] => send(ShowQuestionnaire(id))
-        | [] => ReasonReact.Router.push("/questionnaires/new")
+        | [] => ReasonReact.Router.push("/questionnaires")
         | _ => send(NotFound)
       };
     routeChanged(ReasonReact.Router.dangerouslyGetInitialUrl());
@@ -25,11 +27,14 @@ let make = (_children) => {
   render: ({ state }) =>
     <>
       (switch state {
-        | NewQuestionnaire => <NewQuestionnaire />
+        | ListQuestionnaires => <ListQuestionnaires />
+        | EditQuestionnaire(id) => <EditQuestionnaire id />
         | ShowQuestionnaire(id) => <ShowQuestionnaire id />
         | NotFound => <h1>(s("not found"))</h1>
       })
 
+      <Link href="/questionnaires">(s("questionnaires"))</Link>
+      (s(" | "))
       <Link href="/questionnaires/new">(s("new questionnaire"))</Link>
       (s(" | "))
       <Link href="/questionnaires/1">(s("show 1"))</Link>

@@ -1,3 +1,4 @@
+type id = string;
 type description = string;
 type choice = string;
 

@@ -15,19 +15,40 @@ let decodeQuestion = json =>
     }
   });
 
+let optionalList = (l) =>
+  switch (l) {
+    | None => []
+    | Some(l) => l
+  };
+
 let decodeQuestionnaire = json =>
   Json.Decode.{
     description: json |> field("description", string),
-    questions: json |> field("questions", list(decodeQuestion))
+    questions: json |> optional(field("questions", list(decodeQuestion))) |> optionalList,
   };
 
 let encodeQuestion = question =>
   Json.Encode.(
     switch (question) {
-      | TextField(description) | TextArea(description) =>
-        object_([("description", description |> string)])
-      | AlternateChoices(description, choices) | MultipleChoices(description, choices) =>
+      | TextField(description) =>
         object_([
+          ("type", "TextField" |> string),
+          ("description", description |> string),
+        ])
+      | TextArea(description) =>
+        object_([
+          ("type", "TextArea" |> string),
+          ("description", description |> string),
+        ])
+      | AlternateChoices(description, choices) =>
+        object_([
+          ("type", "AlternateChoices" |> string),
+          ("description", description |> string),
+          ("choices", choices |> list(string)),
+        ])
+      | MultipleChoices(description, choices) =>
+        object_([
+          ("type", "MultipleChoices" |> string),
           ("description", description |> string),
           ("choices", choices |> list(string)),
         ])
