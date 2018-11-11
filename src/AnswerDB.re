@@ -12,7 +12,7 @@ let encodeAnswer = answer =>
 
 include Firebase.Make({
   type record = t;
-  let path = "/questionnaires/1/answers";
+  let path = "/questionnaires";
 
   let encode = encodeAnswer;
   let decode = decodeAnswer;

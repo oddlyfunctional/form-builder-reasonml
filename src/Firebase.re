@@ -77,24 +77,26 @@ module Make = (Config: Config) => {
     get: (string, Config.record => unit) => reference,
   };
 
-  let make = instance => {
+  let make = (~transformPath = x => x, instance) => {
+    let path = transformPath(Config.path);
+
     let create = (~onComplete = _ => (), record) =>
       instance
         -> database
-        -> ref_(Config.path)
+        -> ref_(path)
         -> push(Config.encode(record), onComplete)
         -> keyGet;
 
     let update = (~onComplete = _ => (), id: id, record) =>
       instance
         -> database
-        -> ref_(Config.path ++ "/" ++ id)
+        -> ref_(path ++ "/" ++ id)
         -> set(Config.encode(record), onComplete);
 
     let all = cb =>
       instance
         -> database
-        -> ref_(Config.path)
+        -> ref_(path)
         -> once("value",
              valMany
              |- List.map(((id, record)) => (id, Config.decode(record)))
@@ -104,7 +106,7 @@ module Make = (Config: Config) => {
     let get = (id: id, cb) =>
       instance
         -> database
-        -> ref_(Config.path ++ "/" ++ id)
+        -> ref_(path ++ "/" ++ id)
         -> once("value", val_ |- Config.decode |- cb);
 
     { create, all, get, update };
