@@ -1,21 +1,18 @@
 open Utils;
 
 module Component {
-  type user;
-  type auth;
+  [@bs.send] external
+  onAuthStateChanged: (Firebase.auth, Js.Nullable.t(Firebase.user) => unit) => unit = "";
 
-  [@bs.send] external auth: Firebase.firebase => auth = "";
-  [@bs.send] external onAuthStateChanged: (auth, Js.Nullable.t(user) => unit) => unit = "";
-
-  type state = Loading | Authenticated(user) | Unauthenticated;
-  type action = SetUser(Js.Nullable.t(user));
+  type state = Loading | Authenticated(Firebase.user) | Unauthenticated;
+  type action = SetUser(Js.Nullable.t(Firebase.user));
 
   let component = ReasonReact.reducerComponent("Authenticated");
   let make = (~context: AppContext.context, children) => {
     ...component,
     initialState: () => Loading,
     didMount: ({ send }) =>
-      context.firebase->auth->onAuthStateChanged(user => send(SetUser(user))),
+      context.firebase->Firebase.auth->onAuthStateChanged(user => send(SetUser(user))),
     reducer: (action: action, _state: state) =>
       switch action {
         | SetUser(user) =>

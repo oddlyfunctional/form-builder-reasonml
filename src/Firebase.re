@@ -1,8 +1,20 @@
 open Utils;
+open SharedTypes;
 
 type firebase;
 type instance;
 type db;
+
+[@bs.deriving abstract]
+type user = {
+  uid: id,
+};
+
+[@bs.deriving abstract]
+type auth = {
+  currentUser: user,
+};
+
 [@bs.deriving abstract]
 type reference = {
   key: string,
@@ -50,6 +62,9 @@ let eventString = fun
 /* TODO: Find a better way to represent the return type for the `val` function
  * and avoid duplicating it */
 [@bs.send] external valMany': dataSnapshot(Js.Json.t) => Js.Nullable.t(Js.Dict.t(Js.Json.t)) = "val";
+[@bs.send] external auth: firebase => auth = "";
+[@bs.send] external orderByChild: (reference, string) => reference = "";
+[@bs.send] external equalTo: (reference, 'a) => reference = "";
 
 let once = (reference, event, cb) => once'(reference, eventString(event), cb);
 let on = (reference, event, cb) => on'(reference, eventString(event), cb);
@@ -87,7 +102,7 @@ module Make = (Config: Config) => {
   type interface = {
     create: (~onComplete: onComplete=?, Config.record) => string,
     update: (~onComplete: onComplete=?, string, Config.record) => unit,
-    all: (list((id, Config.record)) => unit) => reference,
+    all: (~userId: id=?, list((id, Config.record)) => unit) => reference,
     get: (string, Config.record => unit) => reference,
     onAdded: (Config.record => unit) => unsubscribe,
   };
@@ -108,15 +123,23 @@ module Make = (Config: Config) => {
         -> ref_(path ++ "/" ++ id)
         -> set(Config.encode(record), onComplete);
 
-    let all = cb =>
-      instance
-        -> database
-        -> ref_(path)
-        -> once(VALUE,
-             valMany
-             |- List.map(((id, record)) => (id, Config.decode(record)))
-             |- cb
-           );
+    let all = (~userId=?, cb) => {
+      let reference = instance->database->ref_(path);
+
+      let callback =
+        valMany
+        |- List.map(((id, record)) => (id, Config.decode(record)))
+        |- cb;
+
+      switch userId {
+        | None => reference-> once(VALUE, callback);
+        | Some(userId) =>
+            reference
+            -> orderByChild("userId")
+            -> equalTo(userId)
+            -> once(VALUE, callback)
+      }
+    };
 
     let onAdded = cb => {
       let reference = instance -> database -> ref_(path);

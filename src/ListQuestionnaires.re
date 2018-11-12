@@ -50,13 +50,18 @@ module Loader {
     ...component,
     initialState: () => Loading,
     didMount: ({ send }) => {
-      context.questionnaireDB.all(pair => send(Loaded(pair))) |> ignore;
+      let userId = Firebase.(firebase->auth->currentUserGet->uidGet);
+      context.questionnaireDB.all(~userId, pair => send(Loaded(pair))) |> ignore;
     },
     reducer: (action: action, _state: state) =>
       switch action {
         | Loaded(pair) => ReasonReact.Update(Loaded(pair))
         | Create => ReasonReact.UpdateWithSideEffects(Loading, _ => {
-            let questionnaire = { description: "", questions: [] };
+            let questionnaire = {
+              description: "",
+              questions: [],
+              userId: Firebase.(firebase->auth->currentUserGet->uidGet),
+            };
 
             let id: ref(option(string)) = ref(None);
             let onComplete = _ =>

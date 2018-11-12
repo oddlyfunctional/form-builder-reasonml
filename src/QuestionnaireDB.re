@@ -23,6 +23,7 @@ let optionalList = (l) =>
 
 let decodeQuestionnaire = json =>
   Json.Decode.{
+    userId: json |> field("userId", string),
     description: json |> field("description", string),
     questions: json |> optional(field("questions", list(decodeQuestion))) |> optionalList,
   };
@@ -58,6 +59,7 @@ let encodeQuestion = question =>
 let encodeQuestionnaire = questionnaire =>
   Json.Encode.(
     object_([
+      ("userId", questionnaire.userId |> string),
       ("description", questionnaire.description |> string),
       ("questions", questionnaire.questions |> list(encodeQuestion)),
     ])
