@@ -9,7 +9,7 @@
     "test:watch": "npm test -- --watch",
     "webpack": "webpack -w",
     "webpack:production": "NODE_ENV=production webpack",
-    "server": "webpack-dev-server"
+    "server": "node server.js"
   },
   "keywords": [
     "BuckleScript"
@@ -21,6 +21,7 @@
     "bs-css": "^7.4.0",
     "copy-webpack-plugin": "^4.6.0",
     "dotenv-webpack": "^1.5.7",
+    "express": "^4.16.4",
     "firebase": "^5.5.7",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
