@@ -23,6 +23,7 @@ module Make = (Config: {
       );
   };
 
+  /* TODO: Something is triggering a warning about missing prop "key" for array */
   module Consumer = {
     let make = (children: (Config.t) => ReasonReact.reactElement) =>
       ReasonReact.wrapJsForReason(

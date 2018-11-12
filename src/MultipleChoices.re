@@ -1,5 +1,4 @@
 open Utils;
-open SharedTypes;
 
 let component = ReasonReact.statelessComponent("MultipleChoices");
 let make = (~description, ~questions, ~id, ~value, ~onChange, _children) => {

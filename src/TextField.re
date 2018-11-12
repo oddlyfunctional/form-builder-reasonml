@@ -1,5 +1,4 @@
 open Utils;
-open SharedTypes;
 
 let component = ReasonReact.statelessComponent("TextField");
 let make = (~description, ~value, ~onChange, _children) => {

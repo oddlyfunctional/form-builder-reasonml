@@ -1,6 +1,3 @@
-open Utils;
-open SharedTypes;
-
 let component = ReasonReact.statelessComponent("Link");
 let make = (~href: string, ~className = "", children) => {
   ...component,

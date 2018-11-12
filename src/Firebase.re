@@ -85,8 +85,9 @@ let valMany = snapshot => {
   |> Array.to_list
 };
 
-let encodeConfig = config =>
-  Json.Encode.(
+/* TODO: Use a @bs.deriving abstract instead */
+let encodeConfig = config => {
+  let encoded = Json.Encode.(
     object_([
       ("apiKey", config.apiKey |> string),
       ("authDomain", config.authDomain |> string),
@@ -94,6 +95,9 @@ let encodeConfig = config =>
       ("storageBucket", config.storageBucket |> string),
     ])
   );
+  Js.log(encoded);
+  encoded;
+};
 let init = encodeConfig |- initializeApp;
 
 module Make = (Config: Config) => {
