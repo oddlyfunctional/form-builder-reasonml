@@ -31,7 +31,7 @@ module Component {
         send(Save);
       })>
         <TextInput
-          label="Questionnaire's name"
+          label="Questionnaire's name:"
           value=state.description
           onChange=handle((description, { send }) => send(UpdateDescription(description)))
         />
@@ -48,9 +48,22 @@ module Component {
             )
         )
 
-        <button type_="button" onClick=handle((_, { send }) => send(AddQuestion))>(s("Add question"))</button>
+        <div>
+          <button
+            type_="button"
+            onClick=handle((_, { send }) => send(AddQuestion))
+            className=Styles.secondaryButton
+          >
+            (s("Add question"))
+          </button>
 
-        <button type_="submit">(s("Save questionnaire"))</button>
+          <button
+            type_="submit"
+            className=Styles.primaryButton
+          >
+            (s("Save questionnaire"))
+          </button>
+        </div>
       </form>
   };
 };

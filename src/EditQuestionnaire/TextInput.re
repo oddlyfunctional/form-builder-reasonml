@@ -5,7 +5,7 @@ let make = (~label, ~value, ~onChange, _children) => {
   ...component,
   render: _ =>
     <label>
-      (s(label))
+      (s(label))<br />
 
       <input
         type_="text"

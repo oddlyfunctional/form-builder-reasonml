@@ -16,7 +16,7 @@ module Component {
       <>
         <h1>(s("Answers for: " ++ questionnaire.description))</h1>
 
-        <table>
+        <table className=(Styles.table ++ " " ++ Styles.textCenter)>
           <thead>
             <tr>
               (questionnaire.questions

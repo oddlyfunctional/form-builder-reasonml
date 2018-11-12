@@ -10,24 +10,33 @@ module Component {
     ...component,
     render: _self =>
       <>
-        (s("List of questionnaires"))
+        <h1>(s("All questionnaires"))</h1>
 
-        <ul>
-          (questionnaires
-           |> map(((id, questionnaire)) =>
-            <li key=id>
-              <a href=("/questionnaires/" ++ id)>(s(questionnaire.description))</a>
-              (s(" - "))
-              <a href=("/questionnaires/" ++ id ++ "/edit")>(s("Edit"))</a>
-              (s(" - "))
-              <a href=("/questionnaires/" ++ id ++ "/answers")>(s("Check answers"))</a>
-            </li>
-           ))
-        </ul>
+        <table className=Styles.table>
+          <tbody>
+            (questionnaires
+             |> map(((id, questionnaire)) => {
+                  let path = "/questionnaires/" ++ id;
 
-        <button type_="button" onClick=onCreate>
-          (s("new questionnaire"))
-        </button>
+                  <tr key=id>
+                    <td>
+                      <Link href=path>(s(questionnaire.description))</Link>
+                    </td>
+
+                    <td className=Styles.textRight>
+                      <Link href=(path ++ "/edit") className=Styles.primaryButton>(s("Edit"))</Link>
+                      <Link href=(path ++ "/answers") className=Styles.secondaryButton>(s("Check answers"))</Link>
+                    </td>
+                  </tr>
+                }))
+          </tbody>
+        </table>
+
+        <div className=Styles.textCenter>
+          <button type_="button" onClick=onCreate className=Styles.primaryButton>
+            (s("new questionnaire"))
+          </button>
+        </div>
       </>
   };
 };

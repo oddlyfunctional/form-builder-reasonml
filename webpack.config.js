@@ -4,6 +4,7 @@ const outputDir = path.join(__dirname, 'build/');
 
 const isProd = process.env.NODE_ENV === 'production';
 const Dotenv = require('dotenv-webpack');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: './src/Index.bs.js',
@@ -19,6 +20,7 @@ module.exports = {
       inject: false
     }),
     new Dotenv(),
+    new CopyWebpackPlugin([{ from: "./src/reset.css", to: "reset.css" }]),
   ],
   devServer: {
     compress: true,

@@ -65,6 +65,6 @@ let make = (~questionnaire, ~onSubmit, _children) => {
         })
       )
 
-      <button type_="submit">(s("Submit"))</button>
+      <button type_="submit" className=Styles.primaryButton>(s("Submit"))</button>
     </form>,
 };

@@ -12,7 +12,7 @@ let make = (~description, ~questions, ~id, ~value, ~onChange, _children) => {
        |> mapi((index, question) => {
          let checked = Answer.contains(value, question);
 
-         <label key=string_of_int(index)>
+         <label key=string_of_int(index) className=Styles.choice>
           <input
             type_="checkbox"
             value=question

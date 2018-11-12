@@ -1,6 +1,16 @@
 open Utils;
 open SharedTypes;
 
+module Style {
+  open Css;
+
+  let question = style([
+    padding(em(1.5)),
+    margin2(~v=em(1.5), ~h=zero),
+    border(px(1), solid, hex("cacaca")),
+  ]);
+};
+
 let setDescription = (question, description) =>
   switch question {
     | TextField(_) => TextField(description)
@@ -39,16 +49,16 @@ let make = (~question: question, ~onChange: question => unit, ~id: string, _chil
   let setChoice = (index, choice) => setChoice(question, index, choice) |> onChange;
   let appendChoice = appendChoice(question) |- onChange;
   let label = switch question {
-    | TextField(_) => "Text field:"
-    | TextArea(_) => "Text area:"
-    | AlternateChoices(_) => "Alternate choices:"
-    | MultipleChoices(_) => "Multiple choices:"
+    | TextField(_) => "Text field"
+    | TextArea(_) => "Text area"
+    | AlternateChoices(_) => "Alternate choices"
+    | MultipleChoices(_) => "Multiple choices"
   };
 
   {
     ...component,
     render: _ =>
-      <div>
+      <div className=Style.question>
         (switch question {
           | TextField(description)
           | TextArea(description) =>
@@ -59,24 +69,32 @@ let make = (~question: question, ~onChange: question => unit, ~id: string, _chil
             />
           | AlternateChoices(description, choices)
           | MultipleChoices(description, choices) =>
-            <div>
+            <>
               <TextInput
                 label
                 value=description
                 onChange=setDescription
               />
 
-              (choices |> mapi((index, choice) =>
-                <TextInput
-                  key=string_of_int(index)
-                  label=("Answer " ++ string_of_int(index + 1))
-                  value=choice
-                  onChange=setChoice(index)
-                />
-              ))
+              <div>
+                (choices |> mapi((index, choice) =>
+                  <TextInput
+                    key=string_of_int(index)
+                    label=("Choice " ++ string_of_int(index + 1))
+                    value=choice
+                    onChange=setChoice(index)
+                  />
+                ))
 
-              <button type_="button" onClick=(_ =>appendChoice(""))>(s("Add choice"))</button>
-            </div>
+                <button
+                  type_="button"
+                  onClick=(_ => appendChoice(""))
+                  className=Styles.secondaryButton
+                >
+                  (s("Add choice"))
+                </button>
+              </div>
+            </>
         })
 
         <SelectQuestionType id question onChange />

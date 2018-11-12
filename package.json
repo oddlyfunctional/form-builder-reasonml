@@ -18,6 +18,8 @@
   "license": "MIT",
   "dependencies": {
     "@glennsl/bs-json": "^3.0.0",
+    "bs-css": "^7.4.0",
+    "copy-webpack-plugin": "^4.6.0",
     "dotenv-webpack": "^1.5.7",
     "firebase": "^5.5.7",
     "react": "^16.2.0",

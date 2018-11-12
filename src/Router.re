@@ -26,15 +26,11 @@ let make = (_children) => {
   },
   reducer: (action: action, _state: state) => ReasonReact.Update(action),
   render: ({ state }) =>
-    <>
-      (switch state {
-        | ListQuestionnaires => <ListQuestionnaires />
-        | EditQuestionnaire(id) => <EditQuestionnaire id />
-        | ShowQuestionnaireAnswers(id) => <ShowQuestionnaireAnswers id />
-        | ShowQuestionnaire(id) => <ShowQuestionnaire id />
-        | NotFound => <h1>(s("not found"))</h1>
-      })
-
-      <Link href="/questionnaires">(s("all questionnaires"))</Link>
-    </>
+    switch state {
+      | ListQuestionnaires => <ListQuestionnaires />
+      | EditQuestionnaire(id) => <EditQuestionnaire id />
+      | ShowQuestionnaireAnswers(id) => <ShowQuestionnaireAnswers id />
+      | ShowQuestionnaire(id) => <ShowQuestionnaire id />
+      | NotFound => <h1>(s("not found"))</h1>
+    }
 };

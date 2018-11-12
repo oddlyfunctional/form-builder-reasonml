@@ -44,7 +44,7 @@ let make = (~question: question, ~id: string, ~onChange, _children) => {
     ...component,
     render: _ =>
       <div>
-        <label>
+        <label className=Styles.choice>
           <input
             type_="radio"
             name
@@ -54,7 +54,7 @@ let make = (~question: question, ~id: string, ~onChange, _children) => {
           (s("Text field"))
         </label>
 
-        <label>
+        <label className=Styles.choice>
           <input
             type_="radio"
             name
@@ -64,7 +64,7 @@ let make = (~question: question, ~id: string, ~onChange, _children) => {
           (s("Text area"))
         </label>
 
-        <label>
+        <label className=Styles.choice>
           <input
             type_="radio"
             name
