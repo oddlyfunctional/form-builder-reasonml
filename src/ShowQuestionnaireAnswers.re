@@ -56,7 +56,7 @@ module Component {
 
 module Loader {
   type state = Loading | Loaded(questionnaire, list(AnswerDB.t));
-  type action = Loaded(questionnaire, list(AnswerDB.t));
+  type action = Loaded(questionnaire, list(AnswerDB.t)) | NewAnswer(AnswerDB.t);
 
   let component = ReasonReact.reducerComponent("ShowQuestionnaireAnswersLoader");
   let make = (~id, ~context: AppContext.context, _children) => {
@@ -65,16 +65,22 @@ module Loader {
     {
       ...component,
       initialState: () => Loading,
-      didMount: ({ send }) =>
-        context.questionnaireDB.get(id, questionnaire =>
-          answerDB.all(pairs => {
-            let answers = pairs |> List.map(snd);
-            send(Loaded(questionnaire, answers))
-          }) |> ignore
-        ) |> ignore,
-      reducer: (action: action, _state: state) =>
+      didMount: ({ send, onUnmount }) => {
+        context.questionnaireDB.get(id, questionnaire => {
+          send(Loaded(questionnaire, []));
+          let unsubscribe = answerDB.onAdded(answer => send(NewAnswer(answer)));
+          onUnmount(unsubscribe |- ignore);
+        }) |> ignore;
+      },
+      reducer: (action: action, state: state) =>
         switch action {
           | Loaded(questionnaire, answers) => ReasonReact.Update(Loaded(questionnaire, answers))
+          | NewAnswer(answer) => {
+              switch state {
+                | Loading => ReasonReact.NoUpdate
+                | Loaded(questionnaire, answers) => ReasonReact.Update(Loaded(questionnaire, answers |> List.append([answer])))
+              }
+            }
         },
       render: ({ state }) =>
         switch state {
