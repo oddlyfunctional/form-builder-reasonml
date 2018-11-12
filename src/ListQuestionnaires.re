@@ -19,6 +19,8 @@ module Component {
               <a href=("/questionnaires/" ++ id)>(s(questionnaire.description))</a>
               (s(" - "))
               <a href=("/questionnaires/" ++ id ++ "/edit")>(s("Edit"))</a>
+              (s(" - "))
+              <a href=("/questionnaires/" ++ id ++ "/answers")>(s("Check answers"))</a>
             </li>
            ))
         </ul>

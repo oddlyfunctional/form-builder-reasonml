@@ -1,7 +1,7 @@
 open Utils;
 
 type id = string;
-type route = ListQuestionnaires | EditQuestionnaire(id) | ShowQuestionnaire(id) | NotFound;
+type route = ListQuestionnaires | EditQuestionnaire(id) | ShowQuestionnaireAnswers(id) | ShowQuestionnaire(id) | NotFound;
 type state = route;
 type action = route;
 
@@ -14,6 +14,7 @@ let make = (_children) => {
       switch (url.path) {
         | ["questionnaires"] => send(ListQuestionnaires)
         | ["questionnaires", id, "edit"] => send(EditQuestionnaire(id))
+        | ["questionnaires", id, "answers"] => send(ShowQuestionnaireAnswers(id))
         | ["questionnaires", id] => send(ShowQuestionnaire(id))
         | [] => ReasonReact.Router.push("/questionnaires")
         | _ => send(NotFound)
@@ -29,14 +30,11 @@ let make = (_children) => {
       (switch state {
         | ListQuestionnaires => <ListQuestionnaires />
         | EditQuestionnaire(id) => <EditQuestionnaire id />
+        | ShowQuestionnaireAnswers(id) => <ShowQuestionnaireAnswers id />
         | ShowQuestionnaire(id) => <ShowQuestionnaire id />
         | NotFound => <h1>(s("not found"))</h1>
       })
 
-      <Link href="/questionnaires">(s("questionnaires"))</Link>
-      (s(" | "))
-      <Link href="/questionnaires/new">(s("new questionnaire"))</Link>
-      (s(" | "))
-      <Link href="/questionnaires/1">(s("show 1"))</Link>
+      <Link href="/questionnaires">(s("all questionnaires"))</Link>
     </>
 };
