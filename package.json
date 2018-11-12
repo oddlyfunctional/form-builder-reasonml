@@ -1,6 +1,9 @@
 {
   "name": "form-builder",
   "version": "0.1.0",
+  "engines": {
+    "node": "10.x"
+  },
   "scripts": {
     "build": "bsb -make-world",
     "start": "bsb -make-world -w",
@@ -9,7 +12,8 @@
     "test:watch": "npm test -- --watch",
     "webpack": "webpack -w",
     "webpack:production": "NODE_ENV=production webpack",
-    "server": "node server.js"
+    "server": "node server.js",
+    "heroku-postbuild": "npm run build && npm run webpack:production"
   },
   "keywords": [
     "BuckleScript"
