@@ -3,7 +3,7 @@ type pair;
 [@bs.get] external provider: pair => ReasonReact.reactClass = "Provider";
 [@bs.get] external consumer: pair => ReasonReact.reactClass = "Consumer";
 
-[@bs.module "React"] external createContext: 'a => pair = "";
+[@bs.module "react"] external createContext: 'a => pair = "";
 
 module Make = (Config: {
   type t;
