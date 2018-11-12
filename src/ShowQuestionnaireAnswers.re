@@ -60,7 +60,7 @@ module Loader {
 
   let component = ReasonReact.reducerComponent("ShowQuestionnaireAnswersLoader");
   let make = (~id, ~context: AppContext.context, _children) => {
-    let answerDB = AnswerDB.make(context.firebase, ~transformPath = path => path ++ "/" ++ id ++ "/answers");
+    let answerDB = AnswerDB.make(context.firebaseInstance, ~transformPath = path => path ++ "/" ++ id ++ "/answers");
 
     {
       ...component,

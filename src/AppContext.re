@@ -5,7 +5,7 @@
 [@bs.val] external databaseURL: string = "process.env.FIREBASE_DATABASE_URL";
 [@bs.val] external storageBucket: string = "process.env.FIREBASE_STORAGE_BUCKET";
 
-let firebase = Firebase.(init({
+let firebaseInstance = Firebase.(init({
   apiKey,
   authDomain,
   databaseURL,
@@ -14,12 +14,14 @@ let firebase = Firebase.(init({
 
 type context = {
   questionnaireDB: QuestionnaireDB.interface,
+  firebaseInstance: Firebase.instance,
   firebase: Firebase.firebase,
 };
 
 let defaultValue = {
-  questionnaireDB: QuestionnaireDB.make(firebase),
-  firebase,
+  questionnaireDB: QuestionnaireDB.make(firebaseInstance),
+  firebaseInstance,
+  firebase: Firebase.firebase,
 };
 
 include Context.Make({

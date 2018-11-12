@@ -7,7 +7,7 @@ type action = Loaded(questionnaire) | Submit(AnswerDB.t) | Done | Error(Firebase
 module Component {
   let component = ReasonReact.reducerComponent("ShowQuestionnaire");
   let make = (~context: AppContext.context, ~id, _children) => {
-    let answerDB = AnswerDB.make(context.firebase, ~transformPath = path => path ++ "/" ++ id ++ "/answers");
+    let answerDB = AnswerDB.make(context.firebaseInstance, ~transformPath = path => path ++ "/" ++ id ++ "/answers");
 
     {
       ...component,

@@ -1,6 +1,7 @@
 open Utils;
 
 type firebase;
+type instance;
 type db;
 [@bs.deriving abstract]
 type reference = {
@@ -36,8 +37,9 @@ let eventString = fun
   | VALUE => "value"
   | CHILD_ADDED => "child_added";
 
-[@bs.module "firebase"] external initializeApp : 'a => firebase = "";
-[@bs.send] external database: firebase => db = "";
+[@bs.module "firebase"] external firebase: firebase = "default";
+[@bs.module "firebase"] external initializeApp : 'a => instance = "";
+[@bs.send] external database: instance => db = "";
 [@bs.send] external ref_: (db, path) => reference = "ref";
 [@bs.send] external set': (reference, Js.Json.t, Js.Nullable.t(error) => unit) => unit = "set";
 [@bs.send] external push': (reference, Js.Json.t, Js.Nullable.t(error) => unit) => reference = "push";
